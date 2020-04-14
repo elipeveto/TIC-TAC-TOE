@@ -1,7 +1,11 @@
+package application;
+
 import javafx.animation.PathTransition;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,6 +29,7 @@ import javafx.util.Duration;
 import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.awt.color.*;
 
 public class Tic_Game extends Application
 {
@@ -51,14 +56,22 @@ public class Tic_Game extends Application
     {
         BorderPane borderPane = new BorderPane();
 
-        Label instructions = new Label("Welcome to Tic Tac Toe!! Please chose the settings you wish to play with below!");
+        Label instructions = new Label("Welcome to Tic Tac Toe!! Please choose the settings you wish to play with below!"); ///////////////////////////////////////////// FROM HERE
         instructions.setTextFill(Color.ORANGE);//sets the options label to .
         instructions.setFont(Font.font("", FontWeight.BOLD, 20));//makes options bold and size 20.
         borderPane.setTop(instructions);
+        BorderPane.setAlignment(instructions, Pos.CENTER); 
 
-        GridPane levels = new GridPane();
-        levels.setHgap(10);
-        levels.setVgap(10);
+        VBox levels = new VBox(20);
+        levels.setPadding(new Insets(10,0,0,0));
+        HBox row1 = new HBox(10);
+        row1.setAlignment(Pos.CENTER);
+        HBox row2 = new HBox(10);
+        row2.setAlignment(Pos.CENTER);
+        HBox row3 = new HBox(10);
+        row3.setAlignment(Pos.CENTER);
+        levels.getChildren().addAll(row1, row2, row3);
+        row3.setPadding(new Insets(30,0,0,0));
 
         ToggleGroup numberOfPlayers = new ToggleGroup();
         RadioButton zero = new RadioButton("0 players");
@@ -73,7 +86,7 @@ public class Tic_Game extends Application
         two.setTextFill(Color.YELLOW);//sets the options label to yellow.
         two.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
 
-        Label difficulty = new Label("Chose the AI's Difficulty: ");
+        Label difficulty = new Label("Choose the AI's Difficulty: ");
         difficulty.setTextFill(Color.BROWN);//sets the options label to
         difficulty.setFont(Font.font("", FontWeight.BOLD, 15));
 
@@ -82,24 +95,28 @@ public class Tic_Game extends Application
         beginner.setFont(Font.font("", FontWeight.BOLD, 15));
 
         Button intermediate = new Button("Intermediate");
-        intermediate.setTextFill(Color.YELLOW);//sets the options label to
+        intermediate.setTextFill(Color.ORANGE);//sets the options label to
         intermediate.setFont(Font.font("", FontWeight.BOLD, 15));
 
         Button impossible = new Button("Impossible");
         impossible.setTextFill(Color.RED);//sets the options label to
         impossible.setFont(Font.font("", FontWeight.BOLD, 15));
-
-        levels.addRow(1, difficulty, beginner, intermediate, impossible);
+        
+        row1.getChildren().addAll(zero,one,two);
+        row2.getChildren().addAll(difficulty,beginner, intermediate, impossible);
 
         Button start = new Button("START");
-
-        levels.addRow(2,start);
+        start.setScaleX(2);
+        start.setScaleY(2);
+        
+        row3.getChildren().addAll(start);
 
         HBox avatars = new HBox(10);
-        Label l = new Label("Chose a avatar!");
+        Label l = new Label("Chose an avatar!");
         l.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
         l.setTextFill(Color.RED);//sets the options label to
         l.setFont(Font.font("", FontWeight.BOLD, 25));
+        avatars.setAlignment(Pos.CENTER);
         ImageView avatar1 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
         ImageView avatar2 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
         ImageView avatar3 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
@@ -120,13 +137,13 @@ public class Tic_Game extends Application
         avatar6.setFitHeight(80);
         avatars.getChildren().addAll(l, avatar1,avatar2,avatar3,avatar4,avatar5,avatar6);
         borderPane.setBottom(avatars);
+        BorderPane.setMargin(avatars, new Insets(0,0,10,0)); /////////////////////////////////////////////////////////////////////////////  TO HERE DANIEL 4/14/20 4:00 PM
 
 
         zero.setToggleGroup(numberOfPlayers);
         one.setToggleGroup(numberOfPlayers);
         two.setToggleGroup(numberOfPlayers);
 
-        levels.addRow(0, zero, one, two);
         borderPane.setCenter(levels);
 
         borderPane.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -153,9 +170,14 @@ public class Tic_Game extends Application
 
         // Pane to hold cell
         GridPane pane = new GridPane();
-        for (int x = 0; x < 3; x++)
-            for (int y = 0; y < 3; y++)
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
                 pane.add(cell[x][y] = new Cell(primaryStage), y, x);
+                //GridPane.setHalignment(cell[x][y], HPos.CENTER);
+                //GridPane.setValignment(cell[x][y], VPos.CENTER);
+            }
+        }
+        
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(pane);
@@ -272,6 +294,7 @@ public class Tic_Game extends Application
                     cat.fitWidthProperty().bind(catX.heightProperty());
                     catX.getChildren().add(cat);
                     catX.setPrefSize(primaryStage.getWidth()/4, primaryStage.getHeight()/4);
+                    //catX.setPadding(new Insets(10,10,10,10));
                     this.getChildren().add(catX);
                 }
                 else if (token == 'O')
@@ -394,6 +417,8 @@ public class Tic_Game extends Application
         draw.setTextFill(Color.WHITE);
         draw.setFont(Font.font("", FontWeight.BOLD, 40));
         draw.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-
     }
+    public static void main(String[] args) {
+		launch(args);
+	}
     }
