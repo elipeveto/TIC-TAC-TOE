@@ -42,6 +42,7 @@ public class Tic_Game extends Application
         private Label wins = new Label("Cat Wins: " + xWins + "  Dog Wins: " + oWins);
         private Label trashTalk = new Label("");
 
+        public boolean stop = false;
         public void start(Stage primaryStage) throws FileNotFoundException {
             winAnimation(primaryStage);
             titleScreen(primaryStage);
@@ -130,18 +131,19 @@ public class Tic_Game extends Application
         borderPane.setCenter(levels);
 
         borderPane.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(borderPane, 800, 800);
+        Scene scene = new Scene(borderPane, 800, 850);
         primaryStage.setTitle("TicTacToe"); // Set the stage title
         primaryStage.setMaxWidth(800);
         primaryStage.setMinWidth(800);
-        primaryStage.setMaxHeight(800);
-        primaryStage.setMinHeight(800);
+        primaryStage.setMaxHeight(850);
+        primaryStage.setMinHeight(850);
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
 
         start.setOnAction(event -> {
             primaryStage.setScene(null);
             try {
+
                 game(primaryStage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -186,7 +188,7 @@ public class Tic_Game extends Application
         newGame.setOnAction(event -> {
             primaryStage.setScene(null);
             try {
-
+                whoseTurn = 'X';
                 game(primaryStage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -244,10 +246,13 @@ public class Tic_Game extends Application
             public Cell(Stage primaryStage)
             {
                 setStyle("-fx-border-color: RED");
-                this.setPrefSize(800, 800);
+                this.setPrefSize(800, 850);
                 this.setOnMouseClicked(e -> {
                     try {
                         handleMouseClick(primaryStage);
+                        if(whoseTurn == 'O') {
+                            AI(primaryStage, token);
+                        }
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
@@ -292,38 +297,455 @@ public class Tic_Game extends Application
                 if (token == ' ' && whoseTurn != ' ') {
                     setToken(whoseTurn, primaryStage); // Set token in the cell
 
-                    // Check game status
-                    if (isWon(whoseTurn)) {
-                        if(whoseTurn == 'X')
-                        {
-                            lblStatus.setText("Cats won! The game is over");
-                            wins.setText("Cat Wins: " + ++xWins + "  Dog Wins: " + oWins);
-                        }
-                        if(whoseTurn == 'O')
-                        {
-                            lblStatus.setText("Dogs won! The game is over");
-                            wins.setText("Cat Wins: " + xWins + "  Dog Wins: " + ++oWins);
-                        }
-                        whoseTurn = ' '; // Game is over
+                    whoseTurn(primaryStage);
+
+                }
+            }
+
+            public void whoseTurn(Stage primaryStage) throws FileNotFoundException {
+                // Check game status
+                if (isWon(whoseTurn))
+                {
+                    if(whoseTurn == 'X')
+                    {
+                        lblStatus.setText("Cats won! The game is over");
+                        wins.setText("Cat Wins: " + ++xWins + "  Dog Wins: " + oWins);
                     }
-                    else if (isFull()) {
-                        lblStatus.setText("Draw! The game is over");
-                        whoseTurn = ' '; // Game is over
+                    if(whoseTurn == 'O')
+                    {
+                        lblStatus.setText("Dogs won! The game is over");
+                        wins.setText("Cat Wins: " + xWins + "  Dog Wins: " + ++oWins);
                     }
-                    else {
-                        // Change the turn
-                        whoseTurn = (whoseTurn == 'X') ? 'O' : 'X';
-                        // Display whose turn
-                        theTrash();
-                        if(whoseTurn == 'X')
-                            lblStatus.setText("Cats turn.");
-                        if(whoseTurn == 'O')
-                            lblStatus.setText("Dogs turn.");
+                    whoseTurn = ' '; // Game is over
+                }
+                else if (isFull()) {
+                    lblStatus.setText("Draw! The game is over");
+
+                    whoseTurn = ' '; // Game is over
+                }
+                else
+                    {
+                    // Change the turn
+                    if(whoseTurn == 'O')
+                        whoseTurn = 'X';
+                    else if(whoseTurn == 'X')
+                        whoseTurn = 'O';
+
+                    // Display whose turn
+                    theTrash();
+                    if(whoseTurn == 'X')
+                        lblStatus.setText("Cats turn.");
+                    else if(whoseTurn == 'O')
+                    {
+                        lblStatus.setText("Dogs turn.");
+
                     }
                 }
             }
-        }
 
+            private void AI(Stage primaryStage, char token) throws FileNotFoundException
+            {
+                    stop = false;
+                    if (whoseTurn != ' ')
+                        AIWinCheck(primaryStage, token);
+                    if (whoseTurn != ' ')
+                    {
+                    AIStopCheck(primaryStage, token);
+                    if(stop == false) {
+                        AINormalMove(primaryStage, token);
+                    }
+                    }
+            }
+
+            private void AINormalMove(Stage primaryStage, char token) throws FileNotFoundException
+            {
+                if(token == 'O')
+                token = 'X';
+                else if(token == 'X')
+                token = 'O';
+
+
+                char topCenter = (cell[0][1].getToken());
+                char leftCenter = (cell[1][0].getToken());
+                char rightCenter = (cell[1][2].getToken());
+                char bottomCenter = (cell[2][1].getToken());
+
+                char topLeft = (cell[0][0].getToken());
+                char topRight = (cell[2][0].getToken());
+                char bottomLeft = (cell[0][2].getToken());
+                char bottomRight = (cell[2][2].getToken());
+
+                if(cell[1][1].getToken() == ' ')//first move center if possible
+                {
+                    cell[1][1].setToken(token, primaryStage);
+                    whoseTurn(primaryStage);
+                }
+
+                //if the center was used and it has not taken the top bottom left or right center spots then go with one of those.
+                else if(cell[1][1].getToken() == token && true == (token != topCenter && token != leftCenter && token != rightCenter && token != bottomCenter))
+                {
+                    if(topCenter == ' ' && bottomCenter == ' ') //if top is free go their and stop
+                    {
+                        cell[0][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(leftCenter == ' ' && rightCenter == ' ')//if top center is not free go left center and the next 2 else if continue this process to the other side centers.
+                    {
+                        cell[1][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(rightCenter == ' ' && leftCenter == ' ')
+                    {
+                        cell[1][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(bottomCenter == ' ' && topCenter == ' ')
+                    {
+                        cell[2][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+
+                }
+                else if(cell[1][1].getToken() == token && false == (token != topCenter && token != leftCenter && token != rightCenter && token != bottomCenter))
+                {
+                    if(topLeft == ' ')
+                    {
+                        cell[0][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(topRight == ' ')
+                    {
+                        cell[2][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(bottomLeft == ' ')
+                    {
+                        cell[0][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(bottomRight == ' ')
+                    {
+                        cell[2][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(leftCenter == ' ')
+                    {
+                        cell[0][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(rightCenter == ' ')
+                    {
+                        cell[2][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(topCenter == ' ')
+                    {
+                        cell[1][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(bottomCenter == ' ')
+                    {
+                        cell[1][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                }
+                else if(cell[1][1].getToken() != token && topLeft != token)
+                {
+                    cell[0][0].setToken(token, primaryStage);
+                    whoseTurn(primaryStage);
+                }
+                else if(cell[0][0].getToken() == token && bottomRight != ' ')
+                {
+                    if(topRight == ' ' && topCenter == ' ')
+                    {
+                        cell[2][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else
+                    {
+                        cell[0][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                }
+            }
+            private void AIWinCheck(Stage primaryStage, char token) throws FileNotFoundException
+            {
+               token = whoseTurn;
+                for (int i = 0; i < 3; i++)
+                {
+                    char one = (cell[i][0].getToken());
+                    char two = (cell[i][1].getToken());
+                    char three = (cell[i][2].getToken());
+
+                    if(one == token && two == token && (three == ' '))
+                    {
+                        cell[i][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        break;
+                    }
+                    else if(one == token && two == ' ' && three == token)
+                    {
+                        cell[i][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        break;
+                    }
+                    else if(one == ' ' && two == token && three == token)
+                    {
+                        cell[i][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        break;
+                    }
+                }
+                    for (int i = 0; i < 3; i++)
+                    {
+
+                        char one = (cell[0][i].getToken());
+                        char two = (cell[1][i].getToken());
+                        char three = (cell[2][i].getToken());
+
+                        if(one == token && two == token && three == ' ')
+                        {
+                            cell[2][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            break;
+                        }
+                        else if(one == token && two == ' ' && three == token)
+                        {
+                            cell[1][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            break;
+                        }
+                        else if(one == ' ' && two == token && three == token)
+                        {
+                            cell[0][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            break;
+                        }
+                    }
+
+                char lCrossOne = (cell[0][0].getToken());
+                char lCrossTwo = (cell[1][1].getToken());
+                char lCrossThree = (cell[2][2].getToken());
+
+                if(stop != true)
+                    if(lCrossOne == token && lCrossTwo == token && lCrossThree == ' ')
+                    {
+                        cell[2][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == token && lCrossTwo == ' ' && lCrossThree == token)
+                    {
+                        cell[1][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == ' ' && lCrossTwo == token && lCrossThree == token)
+                    {
+                        cell[0][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+
+                char rCrossOne = (cell[0][2].getToken());
+                char rCrossTwo = (cell[1][1].getToken());
+                char rCrossThree = (cell[2][0].getToken());
+
+                if(stop != true)
+                    if(rCrossOne == token && rCrossTwo == token && rCrossThree == ' ')
+                    {
+                        cell[2][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == token && lCrossTwo == ' ' && lCrossThree == token)
+                    {
+                        cell[1][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == ' ' && lCrossTwo == token && lCrossThree == token)
+                    {
+                        cell[0][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+            }
+
+            private void AIStopCheck(Stage primaryStage, char token) throws FileNotFoundException
+            {
+                //this if and if else swap token to check the opponents tokens on the board
+               token = whoseTurn;
+                if(token == 'O')
+                    token = 'X';
+                else if(token == 'X')
+                    token = 'O';
+                for (int i = 0; i < 3; i++)
+                {
+                    char one = (cell[i][0].getToken());
+                    char two = (cell[i][1].getToken());
+                    char three = (cell[i][2].getToken());
+
+                    if(one == token && two == token && (three == ' '))
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+                        cell[i][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                        break;
+                    }
+                    else if(one == token && two == ' ' && three == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[i][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                        break;
+                    }
+                    else if(one == ' ' && two == token && three == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[i][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                        break;
+                    }
+                }
+                if(stop != true)
+                    for (int i = 0; i < 3; i++)
+                    {
+
+                        char one = (cell[0][i].getToken());
+                        char two = (cell[1][i].getToken());
+                        char three = (cell[2][i].getToken());
+
+                        if(one == token && two == token && three == ' ')
+                        {
+                            if(token == 'O')
+                                token = 'X';
+                            else if(token == 'X')
+                                token = 'O';
+
+                            cell[2][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            stop = true;
+                            break;
+                        }
+                        else if(one == token && two == ' ' && three == token)
+                        {
+                            if(token == 'O')
+                                token = 'X';
+                            else if(token == 'X')
+                                token = 'O';
+
+                            cell[1][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            stop = true;
+                            break;
+                        }
+                        else if(one == ' ' && two == token && three == token)
+                        {
+                            if(token == 'O')
+                                token = 'X';
+                            else if(token == 'X')
+                                token = 'O';
+
+                            cell[0][i].setToken(token, primaryStage);
+                            whoseTurn(primaryStage);
+                            stop = true;
+                            break;
+                        }
+                    }
+
+                char lCrossOne = (cell[0][0].getToken());
+                char lCrossTwo = (cell[1][1].getToken());
+                char lCrossThree = (cell[2][2].getToken());
+
+                if(stop != true)
+                    if(lCrossOne == token && lCrossTwo == token && lCrossThree == ' ')
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[2][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == token && lCrossTwo == ' ' && lCrossThree == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[1][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == ' ' && lCrossTwo == token && lCrossThree == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[0][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+
+                char rCrossOne = (cell[0][2].getToken());
+                char rCrossTwo = (cell[1][1].getToken());
+                char rCrossThree = (cell[2][0].getToken());
+
+                if(stop != true)
+                    if(rCrossOne == token && rCrossTwo == token && rCrossThree == ' ')
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[2][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == token && lCrossTwo == ' ' && lCrossThree == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[1][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+                    else if(lCrossOne == ' ' && lCrossTwo == token && lCrossThree == token)
+                    {
+                        if(token == 'O')
+                            token = 'X';
+                        else if(token == 'X')
+                            token = 'O';
+
+                        cell[0][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        stop = true;
+                    }
+            }
 
         private void theTrash()
         {
@@ -357,6 +779,8 @@ public class Tic_Game extends Application
             }
 
         }
+            }
+
         /*
         get these methods below to work.
          */
