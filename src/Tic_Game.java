@@ -365,10 +365,10 @@ public class Tic_Game extends Application
                 token = 'O';
 
 
-                char topCenter = (cell[0][1].getToken());
-                char leftCenter = (cell[1][0].getToken());
-                char rightCenter = (cell[1][2].getToken());
-                char bottomCenter = (cell[2][1].getToken());
+                char topCenter = (cell[1][0].getToken());
+                char leftCenter = (cell[0][1].getToken());
+                char rightCenter = (cell[2][1].getToken());
+                char bottomCenter = (cell[1][2].getToken());
 
                 char topLeft = (cell[0][0].getToken());
                 char topRight = (cell[2][0].getToken());
@@ -386,22 +386,32 @@ public class Tic_Game extends Application
                 {
                     if(topCenter == ' ' && bottomCenter == ' ') //if top is free go their and stop
                     {
-                        cell[0][1].setToken(token, primaryStage);
+                        cell[1][0].setToken(token, primaryStage);
                         whoseTurn(primaryStage);
                     }
                     else if(leftCenter == ' ' && rightCenter == ' ')//if top center is not free go left center and the next 2 else if continue this process to the other side centers.
                     {
-                        cell[1][0].setToken(token, primaryStage);
+                        cell[0][1].setToken(token, primaryStage);
                         whoseTurn(primaryStage);
                     }
-                    else if(rightCenter == ' ' && leftCenter == ' ')
+                    else if(rightCenter == ' ')
+                    {
+                        cell[2][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(leftCenter == ' ')
+                    {
+                        cell[0][1].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    else if(bottomCenter == ' ')
                     {
                         cell[1][2].setToken(token, primaryStage);
                         whoseTurn(primaryStage);
                     }
-                    else if(bottomCenter == ' ' && topCenter == ' ')
+                    else if(topCenter == ' ')
                     {
-                        cell[2][1].setToken(token, primaryStage);
+                        cell[1][0].setToken(token, primaryStage);
                         whoseTurn(primaryStage);
                     }
 
