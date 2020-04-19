@@ -1,6 +1,9 @@
 import javafx.animation.PathTransition;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -48,98 +51,293 @@ public class Tic_Game extends Application
     {
         BorderPane borderPane = new BorderPane();
 
-        Label instructions = new Label("Welcome to Tic Tac Toe!! Please chose the settings you wish to play with below!");
+        Label instructions = new Label("Welcome to Tic Tac Toe!! Please choose the settings you wish to play with below!"); ///////////////////////////////////////////// Editted from here
         instructions.setTextFill(Color.ORANGE);//sets the options label to .
         instructions.setFont(Font.font("", FontWeight.BOLD, 20));//makes options bold and size 20.
         borderPane.setTop(instructions);
+        BorderPane.setAlignment(instructions, Pos.CENTER);
 
-        GridPane levels = new GridPane();
-        levels.setHgap(10);
-        levels.setVgap(10);
+        VBox levels = new VBox(50);
+        levels.setPadding(new Insets(10,0,0,0));
+        HBox gameModeRow = new HBox(10);
+        gameModeRow.setAlignment(Pos.CENTER);
+        HBox startRow = new HBox(10);
+        startRow.setAlignment(Pos.CENTER);
+        startRow.setPadding(new Insets(0,0,0,0));
+        //borderPane.setBottom(startRow);
+
+        VBox automatedGame = new VBox(20);
+        VBox autoVSHuman = new VBox(20);
+        VBox humanVSHuman = new VBox(20);
+
+        levels.getChildren().addAll(gameModeRow, startRow); // start with autoVSHuman selected
 
         ToggleGroup numberOfPlayers = new ToggleGroup();
         RadioButton zero = new RadioButton("0 players");
         zero.setTextFill(Color.YELLOW);//sets the options label to yellow.
         zero.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
 
+        zero.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 0 players
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected)
+                    levels.getChildren().add(automatedGame);
+                else if (wasPreviouslySelected)
+                    levels.getChildren().remove(automatedGame);
+            }
+        });
+
         RadioButton one = new RadioButton("1 players");
         one.setTextFill(Color.YELLOW);//sets the options label to yellow.
         one.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
+
+        one.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 1 players
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected)
+                    levels.getChildren().add(autoVSHuman);
+                else if (wasPreviouslySelected)
+                    levels.getChildren().remove(autoVSHuman);
+            }
+        });
 
         RadioButton two = new RadioButton("2 players");
         two.setTextFill(Color.YELLOW);//sets the options label to yellow.
         two.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
 
-        Label difficulty = new Label("Chose the AI's Difficulty: ");
-        difficulty.setTextFill(Color.BROWN);//sets the options label to
-        difficulty.setFont(Font.font("", FontWeight.BOLD, 15));
-
-        Button beginner = new Button("Beginner");
-        beginner.setTextFill(Color.GREEN);//sets the options label to
-        beginner.setFont(Font.font("", FontWeight.BOLD, 15));
-
-        Button intermediate = new Button("Intermediate");
-        intermediate.setTextFill(Color.YELLOW);//sets the options label to
-        intermediate.setFont(Font.font("", FontWeight.BOLD, 15));
-
-        Button impossible = new Button("Impossible");
-        impossible.setTextFill(Color.RED);//sets the options label to
-        impossible.setFont(Font.font("", FontWeight.BOLD, 15));
-
-        levels.addRow(1, difficulty, beginner, intermediate, impossible);
-
-        Button start = new Button("START");
-
-        levels.addRow(2,start);
-
-        HBox avatars = new HBox(10);
-        Label l = new Label("Chose a avatar!");
-        l.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
-        l.setTextFill(Color.RED);//sets the options label to
-        l.setFont(Font.font("", FontWeight.BOLD, 25));
-        ImageView avatar1 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        ImageView avatar2 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        ImageView avatar3 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        ImageView avatar4 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        ImageView avatar5 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        ImageView avatar6 = new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg")));
-        avatar1.setFitWidth(80);
-        avatar1.setFitHeight(80);
-        avatar2.setFitWidth(80);
-        avatar2.setFitHeight(80);
-        avatar3.setFitWidth(80);
-        avatar3.setFitHeight(80);
-        avatar4.setFitWidth(80);
-        avatar4.setFitHeight(80);
-        avatar5.setFitWidth(80);
-        avatar5.setFitHeight(80);
-        avatar6.setFitWidth(80);
-        avatar6.setFitHeight(80);
-        avatars.getChildren().addAll(l, avatar1,avatar2,avatar3,avatar4,avatar5,avatar6);
-        borderPane.setBottom(avatars);
+        two.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 2 players
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected)
+                    levels.getChildren().add(humanVSHuman);
+                else if (wasPreviouslySelected)
+                    levels.getChildren().remove(humanVSHuman);
+            }
+        });
 
 
         zero.setToggleGroup(numberOfPlayers);
         one.setToggleGroup(numberOfPlayers);
         two.setToggleGroup(numberOfPlayers);
+        numberOfPlayers.selectToggle(one);
 
-        levels.addRow(0, zero, one, two);
+        gameModeRow.getChildren().addAll(zero,one,two);
+
+        Button start = new Button("START");
+        start.setScaleX(2);
+        start.setScaleY(2);
+
+        startRow.getChildren().addAll(start);
+        // autoVSHuman
+        HBox AISelection1 = new HBox(10);
+        AISelection1.setAlignment(Pos.CENTER);
+        HBox AISelection2 = new HBox(10);
+        AISelection2.setAlignment(Pos.CENTER);
+
+        automatedGame.getChildren().addAll(AISelection1, AISelection2);
+
+        // AI One
+        Label difficulty1 = new Label("Choose the Cat \"X\" AI's Difficulty: ");
+        difficulty1.setTextFill(Color.BROWN);//sets the options label to
+        difficulty1.setFont(Font.font("", FontWeight.BOLD, 15));
+
+        ToggleGroup setAISettings1 = new ToggleGroup();
+
+        RadioButton beginner1 = new RadioButton("Beginner");
+        beginner1.setTextFill(Color.GREEN);//sets the options label to
+        beginner1.setFont(Font.font("", FontWeight.BOLD, 15));
+        beginner1.setToggleGroup(setAISettings1);
+
+        RadioButton intermediate1 = new RadioButton("Intermediate");
+        intermediate1.setTextFill(Color.ORANGE);//sets the options label to
+        intermediate1.setFont(Font.font("", FontWeight.BOLD, 15));
+        intermediate1.setToggleGroup(setAISettings1);
+
+        RadioButton impossible1 = new RadioButton("Impossible");
+        impossible1.setTextFill(Color.BROWN);//sets the options label to
+        impossible1.setFont(Font.font("", FontWeight.BOLD, 15));
+        impossible1.setToggleGroup(setAISettings1);
+
+        setAISettings1.selectToggle(beginner1);
+
+        AISelection1.getChildren().addAll(difficulty1, beginner1, intermediate1, impossible1);
+
+        // AI One
+        Label difficulty2 = new Label("Choose the Dog \"0\" AI's Difficulty: ");
+        difficulty2.setTextFill(Color.BROWN);//sets the options label to
+        difficulty2.setFont(Font.font("", FontWeight.BOLD, 15));
+
+        ToggleGroup setAISettings2 = new ToggleGroup();
+
+        RadioButton beginner2 = new RadioButton("Beginner");
+        beginner2.setTextFill(Color.GREEN);//sets the options label to
+        beginner2.setFont(Font.font("", FontWeight.BOLD, 15));
+        beginner2.setToggleGroup(setAISettings2);
+
+        RadioButton intermediate2 = new RadioButton("Intermediate");
+        intermediate2.setTextFill(Color.ORANGE);//sets the options label to
+        intermediate2.setFont(Font.font("", FontWeight.BOLD, 15));
+        intermediate2.setToggleGroup(setAISettings2);
+
+        RadioButton impossible2 = new RadioButton("Impossible");
+        impossible2.setTextFill(Color.BROWN);//sets the options label to
+        impossible2.setFont(Font.font("", FontWeight.BOLD, 15));
+        impossible2.setToggleGroup(setAISettings2);
+
+        setAISettings2.selectToggle(beginner2);
+
+        AISelection2.getChildren().addAll(difficulty2, beginner2, intermediate2, impossible2);
+
+        // autoVSHuman
+        HBox onePlayerAISelection = new HBox(10);
+        onePlayerAISelection.setAlignment(Pos.CENTER);
+        HBox humanAvatarSelection = new HBox(10);
+        humanAvatarSelection.setAlignment(Pos.CENTER);
+
+        autoVSHuman.getChildren().addAll(onePlayerAISelection, humanAvatarSelection);
+
+        // Select AI
+        Label difficulty = new Label("Choose the AI's Difficulty: ");
+        difficulty.setTextFill(Color.BROWN);//sets the options label to
+        difficulty.setFont(Font.font("", FontWeight.BOLD, 15));
+
+        ToggleGroup setAISettings = new ToggleGroup();
+
+        RadioButton beginner = new RadioButton("Beginner");
+        beginner.setTextFill(Color.GREEN);//sets the options label to
+        beginner.setFont(Font.font("", FontWeight.BOLD, 15));
+        beginner.setToggleGroup(setAISettings);
+
+        RadioButton intermediate = new RadioButton("Intermediate");
+        intermediate.setTextFill(Color.ORANGE);//sets the options label to
+        intermediate.setFont(Font.font("", FontWeight.BOLD, 15));
+        intermediate.setToggleGroup(setAISettings);
+
+        RadioButton impossible = new RadioButton("Impossible");
+        impossible.setTextFill(Color.BROWN);//sets the options label to
+        impossible.setFont(Font.font("", FontWeight.BOLD, 15));
+        impossible.setToggleGroup(setAISettings);
+
+        setAISettings.selectToggle(beginner);
+
+        onePlayerAISelection.getChildren().addAll(difficulty, beginner, intermediate, impossible);
+
+        // Avatar Selection
+        Label l = new Label("Choose an avatar!");
+        l.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        l.setTextFill(Color.RED);//sets the options label to
+        l.setFont(Font.font("", FontWeight.BOLD, 25));
+        humanAvatarSelection.setAlignment(Pos.CENTER);
+
+        ImageView[] images = {
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+
+        VBox[] avatarChoices = new VBox[6];
+        RadioButton[] toggleAvatar = new RadioButton[6];
+        ToggleGroup pickAvatar = new ToggleGroup();
+        for (int i = 0; i < 6; i++) {
+            toggleAvatar[i] = new RadioButton("Select " + (i + 1));
+            toggleAvatar[i].setToggleGroup(pickAvatar);
+            avatarChoices[i] = new VBox(2);
+            images[i].setFitWidth(80);
+            images[i].setFitHeight(80);
+            avatarChoices[i].getChildren().addAll(images[i], toggleAvatar[i]);  // Need to make radio buttons for avatar choices
+        }
+        pickAvatar.selectToggle(toggleAvatar[0]);
+        humanAvatarSelection.getChildren().addAll( l, avatarChoices[0], avatarChoices[1], avatarChoices[2], avatarChoices[3], avatarChoices[4], avatarChoices[5]);
+        BorderPane.setMargin(humanAvatarSelection, new Insets(0,0,10,0));
+
+        // humanVSHuman
+        HBox humanPlayerSelection1 = new HBox(10);
+        humanPlayerSelection1.setAlignment(Pos.CENTER);
+        HBox humanPlayerSelection2 = new HBox(10);
+        humanPlayerSelection2.setAlignment(Pos.CENTER);
+
+        humanVSHuman.getChildren().addAll(humanPlayerSelection1, humanPlayerSelection2);
+
+        // Avatar Selection 1
+        Label l1 = new Label("Choose an avatar!");
+        l1.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        l1.setTextFill(Color.RED);//sets the options label to
+        l1.setFont(Font.font("", FontWeight.BOLD, 25));
+        humanPlayerSelection1.setAlignment(Pos.CENTER);
+
+        ImageView[] images1 = {
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+
+        VBox[] avatarChoices1 = new VBox[6];
+        RadioButton[] toggleAvatar1 = new RadioButton[6];
+        ToggleGroup pickAvatar1 = new ToggleGroup();
+        for (int i = 0; i < 6; i++) {
+            toggleAvatar1[i] = new RadioButton("Select " + (i + 1));
+            toggleAvatar1[i].setToggleGroup(pickAvatar1);
+            avatarChoices1[i] = new VBox(2);
+            images1[i].setFitWidth(80);
+            images1[i].setFitHeight(80);
+            avatarChoices1[i].getChildren().addAll(images1[i], toggleAvatar1[i]);  // Need to make radio buttons for avatar choices
+        }
+        pickAvatar1.selectToggle(toggleAvatar1[0]);
+        humanPlayerSelection1.getChildren().addAll( l1, avatarChoices1[0], avatarChoices1[1], avatarChoices1[2], avatarChoices1[3], avatarChoices1[4], avatarChoices1[5]);
+        BorderPane.setMargin(humanPlayerSelection1, new Insets(0,0,10,0));
+
+        // Avatar Selection 2
+        Label l2 = new Label("Choose an avatar!");
+        l2.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        l2.setTextFill(Color.RED);//sets the options label to
+        l2.setFont(Font.font("", FontWeight.BOLD, 25));
+        humanPlayerSelection2.setAlignment(Pos.CENTER);
+
+        ImageView[] images2 = {
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
+                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+
+        VBox[] avatarChoices2 = new VBox[6];
+        RadioButton[] toggleAvatar2 = new RadioButton[6];
+        ToggleGroup pickAvatar2 = new ToggleGroup();
+        for (int i = 0; i < 6; i++) {
+            toggleAvatar2[i] = new RadioButton("Select " + (i + 1));
+            toggleAvatar2[i].setToggleGroup(pickAvatar1);
+            avatarChoices2[i] = new VBox(2);
+            images2[i].setFitWidth(80);
+            images2[i].setFitHeight(80);
+            avatarChoices2[i].getChildren().addAll(images2[i], toggleAvatar2[i]);  // Need to make radio buttons for avatar choices
+        }
+        pickAvatar2.selectToggle(toggleAvatar2[0]);
+        humanPlayerSelection2.getChildren().addAll( l2, avatarChoices2[0], avatarChoices2[1], avatarChoices2[2], avatarChoices2[3], avatarChoices2[4], avatarChoices2[5]);
+        BorderPane.setMargin(humanPlayerSelection2, new Insets(0,0,10,0));
+
+
+        /////////////////////////////////////////////////////////////////////////////  TO HERE DANIEL 4/18/20 4:40 PM
+
         borderPane.setCenter(levels);
 
         borderPane.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(borderPane, 800, 850);
+        Scene scene = new Scene(borderPane, 800, 800);
         primaryStage.setTitle("TicTacToe"); // Set the stage title
         primaryStage.setMaxWidth(800);
         primaryStage.setMinWidth(800);
-        primaryStage.setMaxHeight(850);
-        primaryStage.setMinHeight(850);
+        primaryStage.setMaxHeight(800);
+        primaryStage.setMinHeight(800);
         primaryStage.setScene(scene); // Place the scene in the stage
         primaryStage.show(); // Display the stage
 
         start.setOnAction(event -> {
             primaryStage.setScene(null);
             try {
-
                 game(primaryStage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
