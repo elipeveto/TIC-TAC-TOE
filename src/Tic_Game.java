@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.concurrent.TimeUnit;
 
 
 public class Tic_Game extends Application
@@ -45,6 +46,9 @@ public class Tic_Game extends Application
 
         public boolean stop = false;
         public boolean won = false;
+
+        public int currentDifficulty;
+        public int currentGameMode;
 
     // Indicates which game mode the user selects 0, 1, or 2 players
     private int gameMode = 0;
@@ -76,8 +80,13 @@ public class Tic_Game extends Application
     private int humanAvatar1 = 0;
     private int humanAvatar2 = 0;
 
-        public void start(Stage primaryStage) throws FileNotFoundException {
+    private int dif1;
+    private int dif2;
+
+        public void start(Stage primaryStage) throws FileNotFoundException
+        {
             titleScreen(primaryStage);
+
         }
   /*  private void titleScreen(Stage primaryStage) throws FileNotFoundException
     {
@@ -408,7 +417,6 @@ public class Tic_Game extends Application
       HBox startRow = new HBox(10);
       startRow.setAlignment(Pos.CENTER);
       startRow.setPadding(new Insets(0,0,0,0));
-      //borderPane.setBottom(startRow);
 
       VBox automatedGame = new VBox(20);
       VBox autoVSHuman = new VBox(20);
@@ -677,13 +685,41 @@ public class Tic_Game extends Application
       primaryStage.show(); // Display the stage
 
       start.setOnAction(event -> {
+
           if (numberOfPlayers.getSelectedToggle() == zero) {
               gameMode = 0;
+
+              if(beginner1.isSelected())
+                  dif1 = 0;
+              if(beginner2.isSelected())
+                  dif2 = 0;
+              if(intermediate1.isSelected())
+                  dif1 = 1;
+              if(intermediate2.isSelected())
+                  dif2 = 1;
+              if(impossible1.isSelected())
+                  dif1 = 1;
+              if(impossible2.isSelected())
+                  dif2 = 1;
+
               autoAvatar1 = setAISettings1.getToggles().indexOf(setAISettings1.getSelectedToggle());
               autoAvatar2 = setAISettings2.getToggles().indexOf(setAISettings2.getSelectedToggle());
 
+
           } else if (numberOfPlayers.getSelectedToggle() == one) {
               gameMode = 1;
+
+              if(beginner1.isSelected())
+                  System.out.println("beginner1");
+              if(beginner.isSelected())
+                  System.out.println("beginner");
+
+              if(beginner.isSelected())
+                  currentDifficulty = 0;
+              else if(intermediate.isSelected())
+                  currentDifficulty = 1;
+              else if(impossible.isSelected())
+                  currentDifficulty = 2;
               autoAvatar = setAISettings.getToggles().indexOf(setAISettings.getSelectedToggle());
               humanAvatar = pickAvatar.getToggles().indexOf(pickAvatar.getSelectedToggle());
           }
@@ -695,12 +731,12 @@ public class Tic_Game extends Application
           primaryStage.setScene(null);
           try {
               game(primaryStage);
-          } catch (FileNotFoundException e) {
+          } catch (FileNotFoundException | InterruptedException e) {
               e.printStackTrace();
           }
       });
   }
-    private void game(Stage primaryStage) throws FileNotFoundException {
+    private void game(Stage primaryStage) throws FileNotFoundException, InterruptedException {
 
         // Pane to hold cell
         GridPane pane = new GridPane();
@@ -730,6 +766,7 @@ public class Tic_Game extends Application
             two = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar2])));
             dog = new Label("AI 1: Dog");
             cat = new Label("AI 2: Cat");
+
         } else if (gameMode == 1) {
             one = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar])));
             two = new ImageView(new Image(new FileInputStream(charAvatars[humanAvatar])));
@@ -781,9 +818,10 @@ public class Tic_Game extends Application
         newGame.setOnAction(event -> { // This resets the game for the same game mode
             primaryStage.setScene(null);
             try {
+
                 whoseTurn = 'X';
                 game(primaryStage);
-            } catch (FileNotFoundException e) {
+            } catch (FileNotFoundException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -800,6 +838,15 @@ public class Tic_Game extends Application
                 e.printStackTrace();
             }
         });
+        if(gameMode == 0)//If game mode is 0 players then this has the AI play each other.
+        {
+            Cell start = new Cell(primaryStage);
+            start.AI(primaryStage, 'X');
+            while (whoseTurn != ' ') {
+                start.AI(primaryStage, 'O');
+                start.AI(primaryStage, 'X');
+            }
+        }
     }
    /* private void game(Stage primaryStage) throws FileNotFoundException
     {
@@ -882,21 +929,25 @@ public class Tic_Game extends Application
             // Token used for this cell
             private char token = ' ';
 
-            public Cell(Stage primaryStage)
-            {
+            public Cell(Stage primaryStage) throws FileNotFoundException {
                 setStyle("-fx-border-color: RED");//sets the border of the game boxes to red.
                 this.setPrefSize(800, 850);//sets the game dimensions.
+
+
+                if(gameMode != 0)
                 this.setOnMouseClicked(e -> //if the mouse clicks on a cell run the handleMouseClick method.
                 {
                     try {
                         handleMouseClick(primaryStage);
-                        if(whoseTurn == 'O') {
+
+                        if(gameMode == 1 && whoseTurn == 'O')
                             AI(primaryStage, token);
-                        }
+
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
                 });
+
             }
 
             public char getToken()
@@ -941,6 +992,8 @@ public class Tic_Game extends Application
 
             public void whoseTurn(Stage primaryStage) throws FileNotFoundException
             {
+
+
                 // Check game status
                 if (isWon(whoseTurn))//if someone won continue.
                 {
@@ -981,6 +1034,19 @@ public class Tic_Game extends Application
 
             private void AI(Stage primaryStage, char token) throws FileNotFoundException//Does the AI's turn.
             {
+                if(currentDifficulty == 0)//beginner difficulty.
+                {
+                    randomMove(primaryStage, token);//picks a random free spot.
+                }
+                if(currentDifficulty == 1)//intermediate difficulty. Picks a random free spot, unless the opponent has 2 in a line.
+                {
+                    stop = false;//resets stop incase AIStopCheck stopped a move last move.
+                    AIStopCheck(primaryStage, token);
+                    if(stop == false) //does not move again if it already stopped a move.
+                        randomMove(primaryStage, token);//does a random move.
+                }
+                if(currentDifficulty == 2) //Impossible difficulty
+                {
                     stop = false;//This resets stop to false each move.
                     won = false;//This resets won to false each move.
                     if (whoseTurn != ' ')//as long as the game is not over yet continue.
@@ -989,13 +1055,36 @@ public class Tic_Game extends Application
 
                     if (whoseTurn != ' ' && won == false)//As long as the game is not over yet, and the AIWinCheck method did not just win continue.
                     {
-                    AIStopCheck(primaryStage, token);
-                    if(stop == false) //As long as the AIStopCheck method did not just make a move continue.
-                    {
-                        AINormalMove(primaryStage, token);
+                        AIStopCheck(primaryStage, token);
+                        if (stop == false) //As long as the AIStopCheck method did not just make a move continue.
+                        {
+                            AINormalMove(primaryStage, token);
+                        }
                     }
-                    }
+                }
             }
+
+            private void randomMove(Stage primaryStage, char token) throws FileNotFoundException
+            {
+                //the if, else if swaps it to the AI's token.
+                if(token == 'O')
+                    token = 'X';
+                else if(token == 'X')
+                    token = 'O';
+                boolean moved = false;
+                while(moved == false)
+                {
+                    int x = (int)(Math.random() * 3);
+                    int y = (int)(Math.random() * 3);
+                    char check = cell[x][y].getToken();
+                    if(check == ' ') {
+                        cell[x][y].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                        moved = true;
+                    }
+                }
+            }
+
 
             private void AINormalMove(Stage primaryStage, char token) throws FileNotFoundException//This method does normal moves if the AIWinCheck and AIStopCheck are not needed.
             {
@@ -1060,8 +1149,20 @@ public class Tic_Game extends Application
                 //if the center was taken by the AI and it has taken the top bottom left or right center spots then continue.
                 else if(cell[1][1].getToken() == token && false == (token != topCenter && token != leftCenter && token != rightCenter && token != bottomCenter))
                 {
+                    //stops a way it can lose I found.
+                    if(topLeft != ' ' && topLeft != token && bottomCenter != ' ' && bottomCenter != token && rightCenter != ' ' && rightCenter != token)
+                    {
+                        cell[2][0].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
+                    //stops a way it can lose I found.
+                    else if(topRight != ' ' && topRight != token && bottomCenter != ' ' && bottomCenter != token && leftCenter != ' ' && leftCenter != token)
+                    {
+                        cell[2][2].setToken(token, primaryStage);
+                        whoseTurn(primaryStage);
+                    }
                     //Basically this happens towards the end, and this takes a spot if its open.
-                    if(topLeft == ' ')
+                    else if(topLeft == ' ')
                     {
                         cell[0][0].setToken(token, primaryStage);
                         whoseTurn(primaryStage);
