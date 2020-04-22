@@ -1,3 +1,4 @@
+import javafx.animation.FadeTransition;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -6,10 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -23,7 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.concurrent.TimeUnit;
 
 
 public class Tic_Game extends Application
@@ -70,6 +67,16 @@ public class Tic_Game extends Application
             "Pictures/impossible.jpeg",
     };
 
+    // Images for backgrounds
+    private String[] linksBackgrounds = {
+            "Pictures/back1.jpg",
+            "Pictures/back2.jpg",
+            "Pictures/back3.jpg",
+            "Pictures/back4.jpg",
+            "Pictures/back5.jpg",
+            "Pictures/back6.jpg"
+    };
+
     // Used when there are 0 players
     private int autoAvatar1 = 0;
     private int autoAvatar2 = 0;
@@ -83,14 +90,15 @@ public class Tic_Game extends Application
     private int dif1;
     private int dif2;
 
+    private Label forGameResults = new Label("");
+
         public void start(Stage primaryStage) throws FileNotFoundException
         {
             titleScreen(primaryStage);
 
         }
-  /*  private void titleScreen(Stage primaryStage) throws FileNotFoundException
+    private void titleScreen(Stage primaryStage) throws FileNotFoundException
     {
-
         BorderPane borderPane = new BorderPane();
 
         Label instructions = new Label("Welcome to Tic Tac Toe!! Please choose the settings you wish to play with below!"); ///////////////////////////////////////////// Editted from here
@@ -272,12 +280,12 @@ public class Tic_Game extends Application
         humanAvatarSelection.setAlignment(Pos.CENTER);
 
         ImageView[] images = {
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+                new ImageView(new Image(new FileInputStream(charAvatars[0]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[1]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[2]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[3]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[4]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
 
         VBox[] avatarChoices = new VBox[6];
         RadioButton[] toggleAvatar = new RadioButton[6];
@@ -310,12 +318,12 @@ public class Tic_Game extends Application
         humanPlayerSelection1.setAlignment(Pos.CENTER);
 
         ImageView[] images1 = {
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+                new ImageView(new Image(new FileInputStream(charAvatars[0]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[1]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[2]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[3]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[4]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
 
         VBox[] avatarChoices1 = new VBox[6];
         RadioButton[] toggleAvatar1 = new RadioButton[6];
@@ -339,20 +347,20 @@ public class Tic_Game extends Application
         l2.setFont(Font.font("", FontWeight.BOLD, 25));
         humanPlayerSelection2.setAlignment(Pos.CENTER);
 
-        ImageView[] images2 = {
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))),
-                new ImageView(new Image(new FileInputStream("Pictures/avatar1.jpg"))) 	};
+        ImageView[] images2 = {		// These are the images displayed for the user to choose from.
+                new ImageView(new Image(new FileInputStream(charAvatars[0]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[1]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[2]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[3]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[4]))),
+                new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
 
         VBox[] avatarChoices2 = new VBox[6];
         RadioButton[] toggleAvatar2 = new RadioButton[6];
         ToggleGroup pickAvatar2 = new ToggleGroup();
         for (int i = 0; i < 6; i++) {
             toggleAvatar2[i] = new RadioButton("Select " + (i + 1));
-            toggleAvatar2[i].setToggleGroup(pickAvatar1);
+            toggleAvatar2[i].setToggleGroup(pickAvatar2);
             avatarChoices2[i] = new VBox(2);
             images2[i].setFitWidth(80);
             images2[i].setFitHeight(80);
@@ -361,9 +369,6 @@ public class Tic_Game extends Application
         pickAvatar2.selectToggle(toggleAvatar2[0]);
         humanPlayerSelection2.getChildren().addAll( l2, avatarChoices2[0], avatarChoices2[1], avatarChoices2[2], avatarChoices2[3], avatarChoices2[4], avatarChoices2[5]);
         BorderPane.setMargin(humanPlayerSelection2, new Insets(0,0,10,0));
-
-
-        /////////////////////////////////////////////////////////////////////////////  TO HERE DANIEL 4/18/20 4:40 PM
 
         borderPane.setCenter(levels);
 
@@ -378,367 +383,63 @@ public class Tic_Game extends Application
         primaryStage.show(); // Display the stage
 
         start.setOnAction(event -> {
+
+            if (numberOfPlayers.getSelectedToggle() == zero) {
+                gameMode = 0;
+
+                if(beginner1.isSelected())
+                    dif1 = 0;
+                if(beginner2.isSelected())
+                    dif2 = 0;
+                if(intermediate1.isSelected())
+                    dif1 = 1;
+                if(intermediate2.isSelected())
+                    dif2 = 1;
+                if(impossible1.isSelected())
+                    dif1 = 1;
+                if(impossible2.isSelected())
+                    dif2 = 1;
+
+                autoAvatar1 = setAISettings1.getToggles().indexOf(setAISettings1.getSelectedToggle());
+                autoAvatar2 = setAISettings2.getToggles().indexOf(setAISettings2.getSelectedToggle());
+
+
+            } else if (numberOfPlayers.getSelectedToggle() == one) {
+                gameMode = 1;
+
+                if(beginner1.isSelected())
+                    System.out.println("beginner1");
+                if(beginner.isSelected())
+                    System.out.println("beginner");
+
+                if(beginner.isSelected())
+                    currentDifficulty = 0;
+                else if(intermediate.isSelected())
+                    currentDifficulty = 1;
+                else if(impossible.isSelected())
+                    currentDifficulty = 2;
+                autoAvatar = setAISettings.getToggles().indexOf(setAISettings.getSelectedToggle());
+                humanAvatar = pickAvatar.getToggles().indexOf(pickAvatar.getSelectedToggle());
+            }
+            else {
+                gameMode = 3;
+                humanAvatar1 = pickAvatar1.getToggles().indexOf(pickAvatar1.getSelectedToggle());
+                humanAvatar2 = pickAvatar2.getToggles().indexOf(pickAvatar2.getSelectedToggle());
+            }
             primaryStage.setScene(null);
             try {
-                if(zero.isSelected())
-                {
-                    players = 0;
-                    game(primaryStage);
-                }
-                else if(one.isSelected())
-                {
-                    players = 1;
-                    game(primaryStage);
-                }
-                else if(two.isSelected())
-                {
-                    players = 2;
-                    game(primaryStage);
-                }
+                game(primaryStage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         });
-    }*/
-  private void titleScreen(Stage primaryStage) throws FileNotFoundException
-  {
-      BorderPane borderPane = new BorderPane();
+    }
 
-      Label instructions = new Label("Welcome to Tic Tac Toe!! Please choose the settings you wish to play with below!"); ///////////////////////////////////////////// Editted from here
-      instructions.setTextFill(Color.ORANGE);//sets the options label to .
-      instructions.setFont(Font.font("", FontWeight.BOLD, 20));//makes options bold and size 20.
-      borderPane.setTop(instructions);
-      BorderPane.setAlignment(instructions, Pos.CENTER);
-
-      VBox levels = new VBox(50);
-      levels.setPadding(new Insets(10,0,0,0));
-      HBox gameModeRow = new HBox(10);
-      gameModeRow.setAlignment(Pos.CENTER);
-      HBox startRow = new HBox(10);
-      startRow.setAlignment(Pos.CENTER);
-      startRow.setPadding(new Insets(0,0,0,0));
-
-      VBox automatedGame = new VBox(20);
-      VBox autoVSHuman = new VBox(20);
-      VBox humanVSHuman = new VBox(20);
-
-      levels.getChildren().addAll(gameModeRow, startRow); // start with autoVSHuman selected
-
-      ToggleGroup numberOfPlayers = new ToggleGroup();
-      RadioButton zero = new RadioButton("0 players");
-      zero.setTextFill(Color.YELLOW);//sets the options label to yellow.
-      zero.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
-
-      zero.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 0 players
-          @Override
-          public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
-              if (isNowSelected)
-                  levels.getChildren().add(automatedGame);
-              else if (wasPreviouslySelected)
-                  levels.getChildren().remove(automatedGame);
-          }
-      });
-
-      RadioButton one = new RadioButton("1 players");
-      one.setTextFill(Color.YELLOW);//sets the options label to yellow.
-      one.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
-
-      one.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 1 players
-          @Override
-          public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
-              if (isNowSelected)
-                  levels.getChildren().add(autoVSHuman);
-              else if (wasPreviouslySelected)
-                  levels.getChildren().remove(autoVSHuman);
-          }
-      });
-
-      RadioButton two = new RadioButton("2 players");
-      two.setTextFill(Color.YELLOW);//sets the options label to yellow.
-      two.setFont(Font.font("", FontWeight.BOLD, 15));//makes options bold and size 15.
-
-      two.selectedProperty().addListener(new ChangeListener<Boolean>() { // Listener to change the selections to fit 2 players
-          @Override
-          public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
-              if (isNowSelected)
-                  levels.getChildren().add(humanVSHuman);
-              else if (wasPreviouslySelected)
-                  levels.getChildren().remove(humanVSHuman);
-          }
-      });
-
-
-      zero.setToggleGroup(numberOfPlayers);
-      one.setToggleGroup(numberOfPlayers);
-      two.setToggleGroup(numberOfPlayers);
-      numberOfPlayers.selectToggle(one);
-
-      gameModeRow.getChildren().addAll(zero,one,two);
-
-      Button start = new Button("START");
-      start.setScaleX(2);
-      start.setScaleY(2);
-
-      startRow.getChildren().addAll(start);
-      // autoVSHuman
-      HBox AISelection1 = new HBox(10);
-      AISelection1.setAlignment(Pos.CENTER);
-      HBox AISelection2 = new HBox(10);
-      AISelection2.setAlignment(Pos.CENTER);
-
-      automatedGame.getChildren().addAll(AISelection1, AISelection2);
-
-      // AI One
-      Label difficulty1 = new Label("Choose the Cat \"X\" AI's Difficulty: ");
-      difficulty1.setTextFill(Color.BROWN);//sets the options label to
-      difficulty1.setFont(Font.font("", FontWeight.BOLD, 15));
-
-      ToggleGroup setAISettings1 = new ToggleGroup();
-
-      RadioButton beginner1 = new RadioButton("Beginner");
-      beginner1.setTextFill(Color.GREEN);//sets the options label to
-      beginner1.setFont(Font.font("", FontWeight.BOLD, 15));
-      beginner1.setToggleGroup(setAISettings1);
-
-      RadioButton intermediate1 = new RadioButton("Intermediate");
-      intermediate1.setTextFill(Color.ORANGE);//sets the options label to
-      intermediate1.setFont(Font.font("", FontWeight.BOLD, 15));
-      intermediate1.setToggleGroup(setAISettings1);
-
-      RadioButton impossible1 = new RadioButton("Impossible");
-      impossible1.setTextFill(Color.BROWN);//sets the options label to
-      impossible1.setFont(Font.font("", FontWeight.BOLD, 15));
-      impossible1.setToggleGroup(setAISettings1);
-
-      setAISettings1.selectToggle(beginner1);
-
-      AISelection1.getChildren().addAll(difficulty1, beginner1, intermediate1, impossible1);
-
-      // AI One
-      Label difficulty2 = new Label("Choose the Dog \"0\" AI's Difficulty: ");
-      difficulty2.setTextFill(Color.BROWN);//sets the options label to
-      difficulty2.setFont(Font.font("", FontWeight.BOLD, 15));
-
-      ToggleGroup setAISettings2 = new ToggleGroup();
-
-      RadioButton beginner2 = new RadioButton("Beginner");
-      beginner2.setTextFill(Color.GREEN);//sets the options label to
-      beginner2.setFont(Font.font("", FontWeight.BOLD, 15));
-      beginner2.setToggleGroup(setAISettings2);
-
-      RadioButton intermediate2 = new RadioButton("Intermediate");
-      intermediate2.setTextFill(Color.ORANGE);//sets the options label to
-      intermediate2.setFont(Font.font("", FontWeight.BOLD, 15));
-      intermediate2.setToggleGroup(setAISettings2);
-
-      RadioButton impossible2 = new RadioButton("Impossible");
-      impossible2.setTextFill(Color.BROWN);//sets the options label to
-      impossible2.setFont(Font.font("", FontWeight.BOLD, 15));
-      impossible2.setToggleGroup(setAISettings2);
-
-      setAISettings2.selectToggle(beginner2);
-
-      AISelection2.getChildren().addAll(difficulty2, beginner2, intermediate2, impossible2);
-
-      // autoVSHuman
-      HBox onePlayerAISelection = new HBox(10);
-      onePlayerAISelection.setAlignment(Pos.CENTER);
-      HBox humanAvatarSelection = new HBox(10);
-      humanAvatarSelection.setAlignment(Pos.CENTER);
-
-      autoVSHuman.getChildren().addAll(onePlayerAISelection, humanAvatarSelection);
-
-      // Select AI
-      Label difficulty = new Label("Choose the AI's Difficulty: ");
-      difficulty.setTextFill(Color.BROWN);//sets the options label to
-      difficulty.setFont(Font.font("", FontWeight.BOLD, 15));
-
-      ToggleGroup setAISettings = new ToggleGroup();
-
-      RadioButton beginner = new RadioButton("Beginner");
-      beginner.setTextFill(Color.GREEN);//sets the options label to
-      beginner.setFont(Font.font("", FontWeight.BOLD, 15));
-      beginner.setToggleGroup(setAISettings);
-
-      RadioButton intermediate = new RadioButton("Intermediate");
-      intermediate.setTextFill(Color.ORANGE);//sets the options label to
-      intermediate.setFont(Font.font("", FontWeight.BOLD, 15));
-      intermediate.setToggleGroup(setAISettings);
-
-      RadioButton impossible = new RadioButton("Impossible");
-      impossible.setTextFill(Color.BROWN);//sets the options label to
-      impossible.setFont(Font.font("", FontWeight.BOLD, 15));
-      impossible.setToggleGroup(setAISettings);
-
-      setAISettings.selectToggle(beginner);
-
-      onePlayerAISelection.getChildren().addAll(difficulty, beginner, intermediate, impossible);
-
-      // Avatar Selection
-      Label l = new Label("Choose an avatar!");
-      l.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
-      l.setTextFill(Color.RED);//sets the options label to
-      l.setFont(Font.font("", FontWeight.BOLD, 25));
-      humanAvatarSelection.setAlignment(Pos.CENTER);
-
-      ImageView[] images = {
-              new ImageView(new Image(new FileInputStream(charAvatars[0]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[1]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[2]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[3]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[4]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
-
-      VBox[] avatarChoices = new VBox[6];
-      RadioButton[] toggleAvatar = new RadioButton[6];
-      ToggleGroup pickAvatar = new ToggleGroup();
-      for (int i = 0; i < 6; i++) {
-          toggleAvatar[i] = new RadioButton("Select " + (i + 1));
-          toggleAvatar[i].setToggleGroup(pickAvatar);
-          avatarChoices[i] = new VBox(2);
-          images[i].setFitWidth(80);
-          images[i].setFitHeight(80);
-          avatarChoices[i].getChildren().addAll(images[i], toggleAvatar[i]);  // Need to make radio buttons for avatar choices
-      }
-      pickAvatar.selectToggle(toggleAvatar[0]);
-      humanAvatarSelection.getChildren().addAll( l, avatarChoices[0], avatarChoices[1], avatarChoices[2], avatarChoices[3], avatarChoices[4], avatarChoices[5]);
-      BorderPane.setMargin(humanAvatarSelection, new Insets(0,0,10,0));
-
-      // humanVSHuman
-      HBox humanPlayerSelection1 = new HBox(10);
-      humanPlayerSelection1.setAlignment(Pos.CENTER);
-      HBox humanPlayerSelection2 = new HBox(10);
-      humanPlayerSelection2.setAlignment(Pos.CENTER);
-
-      humanVSHuman.getChildren().addAll(humanPlayerSelection1, humanPlayerSelection2);
-
-      // Avatar Selection 1
-      Label l1 = new Label("Choose an avatar!");
-      l1.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
-      l1.setTextFill(Color.RED);//sets the options label to
-      l1.setFont(Font.font("", FontWeight.BOLD, 25));
-      humanPlayerSelection1.setAlignment(Pos.CENTER);
-
-      ImageView[] images1 = {
-              new ImageView(new Image(new FileInputStream(charAvatars[0]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[1]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[2]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[3]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[4]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
-
-      VBox[] avatarChoices1 = new VBox[6];
-      RadioButton[] toggleAvatar1 = new RadioButton[6];
-      ToggleGroup pickAvatar1 = new ToggleGroup();
-      for (int i = 0; i < 6; i++) {
-          toggleAvatar1[i] = new RadioButton("Select " + (i + 1));
-          toggleAvatar1[i].setToggleGroup(pickAvatar1);
-          avatarChoices1[i] = new VBox(2);
-          images1[i].setFitWidth(80);
-          images1[i].setFitHeight(80);
-          avatarChoices1[i].getChildren().addAll(images1[i], toggleAvatar1[i]);  // Need to make radio buttons for avatar choices
-      }
-      pickAvatar1.selectToggle(toggleAvatar1[0]);
-      humanPlayerSelection1.getChildren().addAll( l1, avatarChoices1[0], avatarChoices1[1], avatarChoices1[2], avatarChoices1[3], avatarChoices1[4], avatarChoices1[5]);
-      BorderPane.setMargin(humanPlayerSelection1, new Insets(0,0,10,0));
-
-      // Avatar Selection 2
-      Label l2 = new Label("Choose an avatar!");
-      l2.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
-      l2.setTextFill(Color.RED);//sets the options label to
-      l2.setFont(Font.font("", FontWeight.BOLD, 25));
-      humanPlayerSelection2.setAlignment(Pos.CENTER);
-
-      ImageView[] images2 = {		// These are the images displayed for the user to choose from.
-              new ImageView(new Image(new FileInputStream(charAvatars[0]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[1]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[2]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[3]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[4]))),
-              new ImageView(new Image(new FileInputStream(charAvatars[5]))) 	};
-
-      VBox[] avatarChoices2 = new VBox[6];
-      RadioButton[] toggleAvatar2 = new RadioButton[6];
-      ToggleGroup pickAvatar2 = new ToggleGroup();
-      for (int i = 0; i < 6; i++) {
-          toggleAvatar2[i] = new RadioButton("Select " + (i + 1));
-          toggleAvatar2[i].setToggleGroup(pickAvatar2);
-          avatarChoices2[i] = new VBox(2);
-          images2[i].setFitWidth(80);
-          images2[i].setFitHeight(80);
-          avatarChoices2[i].getChildren().addAll(images2[i], toggleAvatar2[i]);  // Need to make radio buttons for avatar choices
-      }
-      pickAvatar2.selectToggle(toggleAvatar2[0]);
-      humanPlayerSelection2.getChildren().addAll( l2, avatarChoices2[0], avatarChoices2[1], avatarChoices2[2], avatarChoices2[3], avatarChoices2[4], avatarChoices2[5]);
-      BorderPane.setMargin(humanPlayerSelection2, new Insets(0,0,10,0));
-
-      borderPane.setCenter(levels);
-
-      borderPane.setBackground(new Background(new BackgroundFill(Color.GRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-      Scene scene = new Scene(borderPane, 800, 800);
-      primaryStage.setTitle("TicTacToe"); // Set the stage title
-      primaryStage.setMaxWidth(800);
-      primaryStage.setMinWidth(800);
-      primaryStage.setMaxHeight(800);
-      primaryStage.setMinHeight(800);
-      primaryStage.setScene(scene); // Place the scene in the stage
-      primaryStage.show(); // Display the stage
-
-      start.setOnAction(event -> {
-
-          if (numberOfPlayers.getSelectedToggle() == zero) {
-              gameMode = 0;
-
-              if(beginner1.isSelected())
-                  dif1 = 0;
-              if(beginner2.isSelected())
-                  dif2 = 0;
-              if(intermediate1.isSelected())
-                  dif1 = 1;
-              if(intermediate2.isSelected())
-                  dif2 = 1;
-              if(impossible1.isSelected())
-                  dif1 = 1;
-              if(impossible2.isSelected())
-                  dif2 = 1;
-
-              autoAvatar1 = setAISettings1.getToggles().indexOf(setAISettings1.getSelectedToggle());
-              autoAvatar2 = setAISettings2.getToggles().indexOf(setAISettings2.getSelectedToggle());
-
-
-          } else if (numberOfPlayers.getSelectedToggle() == one) {
-              gameMode = 1;
-
-              if(beginner1.isSelected())
-                  System.out.println("beginner1");
-              if(beginner.isSelected())
-                  System.out.println("beginner");
-
-              if(beginner.isSelected())
-                  currentDifficulty = 0;
-              else if(intermediate.isSelected())
-                  currentDifficulty = 1;
-              else if(impossible.isSelected())
-                  currentDifficulty = 2;
-              autoAvatar = setAISettings.getToggles().indexOf(setAISettings.getSelectedToggle());
-              humanAvatar = pickAvatar.getToggles().indexOf(pickAvatar.getSelectedToggle());
-          }
-          else {
-              gameMode = 3;
-              humanAvatar1 = pickAvatar1.getToggles().indexOf(pickAvatar1.getSelectedToggle());
-              humanAvatar2 = pickAvatar2.getToggles().indexOf(pickAvatar2.getSelectedToggle());
-          }
-          primaryStage.setScene(null);
-          try {
-              game(primaryStage);
-          } catch (FileNotFoundException | InterruptedException e) {
-              e.printStackTrace();
-          }
-      });
-  }
-    private void game(Stage primaryStage) throws FileNotFoundException, InterruptedException {
+    private void game(Stage primaryStage) throws FileNotFoundException {
 
         // Pane to hold cell
+
+        BorderPane borderPane = new BorderPane();
         GridPane pane = new GridPane();
 
         for (int x = 0; x < 3; x++) {
@@ -747,14 +448,11 @@ public class Tic_Game extends Application
             }
         }
 
-        BorderPane borderPane = new BorderPane();
+
         borderPane.setCenter(pane);
 
         VBox rightTop = new VBox(10);
         rightTop.setAlignment(Pos.TOP_CENTER);
-        Button toMenu = new Button("Return to Menu");
-
-        VBox.setMargin(toMenu, new Insets(0,20,20,20));
 
         ImageView one;
         ImageView two;
@@ -766,7 +464,6 @@ public class Tic_Game extends Application
             two = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar2])));
             dog = new Label("AI 1: Dog");
             cat = new Label("AI 2: Cat");
-
         } else if (gameMode == 1) {
             one = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar])));
             two = new ImageView(new Image(new FileInputStream(charAvatars[humanAvatar])));
@@ -782,34 +479,65 @@ public class Tic_Game extends Application
         one.setFitWidth(100);
         two.setFitHeight(100);
         two.setFitWidth(100);
+        VBox.setMargin(one, new Insets(0,20, 0,20));
 
         dog.setTextFill(Color.WHITE);//sets the options label to
         dog.setFont(Font.font("", FontWeight.BOLD, 15));
         cat.setTextFill(Color.WHITE);//sets the options label to
         cat.setFont(Font.font("", FontWeight.BOLD, 15));
 
-        rightTop.getChildren().addAll(toMenu, one, dog, two, cat);
+        rightTop.getChildren().addAll(one, dog, two, cat);
         borderPane.setRight(rightTop);
 
         lblStatus.setTextFill(Color.WHITE);//sets the options label to white.
         lblStatus.setFont(Font.font("", FontWeight.BOLD, 30));//makes options bold and size 15.
 
         HBox top = new HBox(10);
+        top.setAlignment(Pos.CENTER_LEFT);
+        top.setTranslateX(10);
+
         Button newGame = new Button("New Game");
+        Button toMenu = new Button("Return to Menu");
+        Button selectBackground = new Button("Change");
+        ChoiceBox<Integer> test = new ChoiceBox<Integer>();
+        test.getItems().addAll(1,2,3,4,5,6);
+        test.getSelectionModel().select(0);
+
+        selectBackground.setOnAction(e -> {
+            BackgroundImage myBI;
+            try {
+                myBI = new BackgroundImage(new Image(new FileInputStream(linksBackgrounds[test.getValue()-1])),
+                        BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                        new BackgroundSize(1200,900, false, false, false, false));
+                borderPane.setBackground(new Background(myBI));
+            } catch (FileNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        });
+
+
         wins.setTextFill(Color.WHITE);//sets the options label to white.
         wins.setFont(Font.font("", FontWeight.BOLD, 20));
         trashTalk.setTextFill(Color.PINK);//sets the options label to white.
         trashTalk.setFont(Font.font("", FontWeight.BOLD, 20));
-        top.getChildren().addAll(newGame, wins,trashTalk);
+        forGameResults.setVisible(false);
+        forGameResults.setTranslateX(-250);
+        forGameResults.setTranslateY(300);
+        forGameResults.toBack();
+        forGameResults.setFont(Font.font("", FontWeight.BOLD, 40));
+
+        top.getChildren().addAll(test, selectBackground, newGame, toMenu, wins ,trashTalk, forGameResults);
         borderPane.setTop(top);
 
         borderPane.setBottom(lblStatus);
         // Create a scene and place it in the stage
         borderPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(borderPane, 1000, 900);
+        Scene scene = new Scene(borderPane, 1200, 900);
         primaryStage.setTitle("TicTacToe"); // Set the stage title
-        primaryStage.setMaxWidth(1000);
-        primaryStage.setMinWidth(1000);
+        primaryStage.setMaxWidth(1200);
+        primaryStage.setMinWidth(1200);
         primaryStage.setMaxHeight(900);
         primaryStage.setMinHeight(900);
         primaryStage.setScene(scene); // Place the scene in the stage
@@ -821,7 +549,7 @@ public class Tic_Game extends Application
 
                 whoseTurn = 'X';
                 game(primaryStage);
-            } catch (FileNotFoundException | InterruptedException e) {
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         });
@@ -838,6 +566,8 @@ public class Tic_Game extends Application
                 e.printStackTrace();
             }
         });
+
+
         if(gameMode == 0)//If game mode is 0 players then this has the AI play each other.
         {
             Cell start = new Cell(primaryStage);
@@ -848,50 +578,7 @@ public class Tic_Game extends Application
             }
         }
     }
-   /* private void game(Stage primaryStage) throws FileNotFoundException
-    {
-        // Pane to hold cell
-        GridPane pane = new GridPane();
-        for (int x = 0; x < 3; x++)
-            for (int y = 0; y < 3; y++)
-                pane.add(cell[x][y] = new Cell(primaryStage), y, x);
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(pane);
-        lblStatus.setTextFill(Color.WHITE);//sets the options label to white.
-        lblStatus.setFont(Font.font("", FontWeight.BOLD, 30));//makes options bold and size 15.
-
-        HBox top = new HBox(10);
-        Button newGame = new Button("New Game");
-        wins.setTextFill(Color.WHITE);//sets the options label to white.
-        wins.setFont(Font.font("", FontWeight.BOLD, 20));
-        trashTalk.setTextFill(Color.PINK);//sets the options label to white.
-        trashTalk.setFont(Font.font("", FontWeight.BOLD, 20));
-        top.getChildren().addAll(newGame, wins,trashTalk);
-        borderPane.setTop(top);
-
-        borderPane.setBottom(lblStatus);
-        // Create a scene and place it in the stage
-        borderPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(borderPane, 800, 800);
-        primaryStage.setTitle("TicTacToe"); // Set the stage title
-        primaryStage.setMaxWidth(800);
-        primaryStage.setMinWidth(800);
-        primaryStage.setMaxHeight(800);
-        primaryStage.setMinHeight(800);
-        primaryStage.setScene(scene); // Place the scene in the stage
-        primaryStage.show(); // Display the stage
-
-        newGame.setOnAction(event -> {
-            primaryStage.setScene(null);
-            try {
-                whoseTurn = 'X';
-                game(primaryStage);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
     public boolean isFull()//checks if every cell is full.
         {
             for (int i = 0; i < 3; i++)
@@ -964,9 +651,9 @@ public class Tic_Game extends Application
                     Pane catX = new Pane();//makes a pane for the image.
                     ImageView cat = new ImageView(new Image(new FileInputStream("Pictures/X.jpg")));//sets the image file to cat.
                     cat.fitHeightProperty().bind(catX.heightProperty());//sets the image height.
-                    cat.fitWidthProperty().bind(catX.heightProperty());//sets the image width.
+                    cat.fitWidthProperty().bind(catX.widthProperty());//sets the image width.
                     catX.getChildren().add(cat);//adds the cat image to the pane.
-                    catX.setPrefSize(primaryStage.getWidth()/4, primaryStage.getHeight()/4);//sets the pane size.
+                    catX.setPrefSize(primaryStage.getWidth()/3-51, primaryStage.getHeight()/3-49);//sets the pane size.
                     this.getChildren().add(catX);//places the pane into the cell clicked.
                 }
                 else if (token == 'O')//This does the same thing for the dog that it did for the cat. The only difference is the Dog image file and variable names are changed to dog.
@@ -974,9 +661,9 @@ public class Tic_Game extends Application
                     Pane dogX = new Pane();
                     ImageView dog = new ImageView(new Image(new FileInputStream("Pictures/O.jpg")));
                     dog.fitHeightProperty().bind(dogX.heightProperty());
-                    dog.fitWidthProperty().bind(dogX.heightProperty());
+                    dog.fitWidthProperty().bind(dogX.widthProperty());
                     dogX.getChildren().add(dog);
-                    dogX.setPrefSize(primaryStage.getWidth()/4, primaryStage.getHeight()/4);
+                    dogX.setPrefSize(primaryStage.getWidth()/3-51, primaryStage.getHeight()/3-49);
                     this.getChildren().add(dogX);
                 }
             }
@@ -992,18 +679,21 @@ public class Tic_Game extends Application
 
             public void whoseTurn(Stage primaryStage) throws FileNotFoundException
             {
-
-
                 // Check game status
                 if (isWon(whoseTurn))//if someone won continue.
                 {
                     if(whoseTurn == 'X')//if X(Cats) won continue.
                     {
+                        winAnimation(primaryStage, "Cats");
                         lblStatus.setText("Cats won! The game is over");//sets lblStatus to who won.
                         wins.setText("Cat Wins: " + ++xWins + "  Dog Wins: " + oWins);//Adds to the cat win count and sets the text to show it.
                     }
                     if(whoseTurn == 'O')//if O(Dogs) won continue.
                     {
+                        if (gameMode != 1) {
+                            winAnimation(primaryStage, "Dogs");
+                        } else
+                            loseAnimation(primaryStage);
                         lblStatus.setText("Dogs won! The game is over");//sets lblStatus to who won.
                         wins.setText("Cat Wins: " + xWins + "  Dog Wins: " + ++oWins);//Adds to the dog win count and sets the text to show it.
                     }
@@ -1011,12 +701,13 @@ public class Tic_Game extends Application
                 }
                 else if (isFull()) //if its a full board continue.
                 {
+                    drawAnimation(primaryStage);
                     lblStatus.setText("Draw! The game is over");//sets the lblStatus to a draw.
 
                     whoseTurn = ' '; // Ends the game.
                 }
                 else//If its not a draw and no one won yet continue.
-                    {
+                {
                     // Change the turn
                     if(whoseTurn == 'O')
                         whoseTurn = 'X';
@@ -1500,80 +1191,133 @@ public class Tic_Game extends Application
                 }
             }
 
-        private void theTrash()//This method is in charge of the trash talk.
-        {
-            int doOrNot = (int)(Math.random() * 2) + 1;//flips a coin.
-            int rand = (int)(Math.random() * 6) + 1;//picks a random number from 1-6 for the trash talk.
-            trashTalk.setText("");//sets the trash talk text to nothing
-            if(doOrNot == 1)//flips a coin to see if it will or will not mock the other player.
-            switch (rand)//picks a random trash talk, and sets trashTalk to a new trash talk text.
+            private void theTrash()//This method is in charge of the trash talk.
             {
-                case 1:
-                {
-                    trashTalk.setText("Wow you call that a move?");
-                }break;
-                case 2:
-                {
-                    trashTalk.setText("I saw that from a mile away.");
-                }break;
-                case 3:
-                {
-                    trashTalk.setText("How predictable.");
-                }break;
-                case 4:
-                {
-                    trashTalk.setText("You insult my intellect with that.");
-                } break;
-                case 5:
-                {
-                    trashTalk.setText("You should just give up now.");
-                }break;
-                case 6:
-                {
-                    trashTalk.setText("You really need to practice more.");
-                }break;
-            }
+                int doOrNot = (int)(Math.random() * 2) + 1;//flips a coin.
+                int rand = (int)(Math.random() * 6) + 1;//picks a random number from 1-6 for the trash talk.
+                trashTalk.setText("");//sets the trash talk text to nothing
+                trashTalk.setFont(Font.font(16));
+                if(doOrNot == 1)//flips a coin to see if it will or will not mock the other player.
+                    switch (rand)//picks a random trash talk, and sets trashTalk to a new trash talk text.
+                    {
+                        case 1:
+                        {
+                            trashTalk.setText("AI: Wow. Call that a move?");
+                        }break;
+                        case 2:
+                        {
+                            trashTalk.setText("AI: I saw that a mile away.");
+                        }break;
+                        case 3:
+                        {
+                            trashTalk.setText("AI: How predictable.");
+                        }break;
+                        case 4:
+                        {
+                            trashTalk.setText("AI: You insult my intellect.");
+                        } break;
+                        case 5:
+                        {
+                            trashTalk.setText("AI: You should just give up.");
+                        }break;
+                        case 6:
+                        {
+                            trashTalk.setText("AI: You really need to practice.");
+                        }break;
+                    }
 
-        }
+            }
             }
 
         /*
         get these methods below to work.
          */
-    private void winAnimation(Stage primaryStage) throws FileNotFoundException
-    {
-        Label win = new Label("Congradulations!!");
-        win.setTextFill(Color.YELLOW);//sets the options label to yellow.
-        win.setFont(Font.font("", FontWeight.BOLD, 40));
-        win.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setDuration(Duration.millis(5000));
+        // Win Animations takes two parameters for when there are two human players and AI vs AI
+        private void winAnimation(Stage primaryStage, String whoWon) throws FileNotFoundException
+        {
+            Label win = forGameResults;
 
-        Node w = win;
+            trashTalk.setText("");
 
-        Path path = new Path();//Defines a Path for the PathTransition
-        path.getElements().add(new MoveTo(primaryStage.getWidth()/2,primaryStage.getHeight()/2));//defines where the path goes to.
-        path.getElements().add(new LineTo(primaryStage.getWidth(),primaryStage.getHeight()));//defines the line to follow.
-        pathTransition.setNode(w);
-        pathTransition.setPath(path);
-        pathTransition.play();
-    }
+            win.toFront();
+            win.setVisible(true);
+            win.setText("Congrats! " + whoWon + " won!");
+            win.setTextFill(Color.BLACK);//sets the options label to yellow.
+            win.setFont(Font.font("", FontWeight.BOLD, 40));
+            win.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), win);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+            fadeIn.play();
+            fadeIn.setOnFinished(e -> {
+                FadeTransition fadeOut = new FadeTransition(Duration.millis(4000), win);
+                fadeOut.setFromValue(1);
+                fadeOut.setToValue(0);
+                fadeOut.play();
+                fadeIn.setOnFinished(r -> {
+                    win.toBack();
+                    win.setVisible(false);
+                });
+            });
+        }
 
     private void loseAnimation(Stage primaryStage) throws FileNotFoundException
     {
-        Label lose = new Label("Better Luck next Time!!");
+        Label lose = forGameResults;
+
+        trashTalk.setText("");
+
+        lose.toFront();
+        lose.setVisible(true);
+        lose.setText("Better Luck next Time!!");
         lose.setTextFill(Color.RED);
         lose.setFont(Font.font("", FontWeight.BOLD, 40));
         lose.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), lose);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+        fadeIn.setOnFinished(e -> {
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(4000), lose);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.play();
+            fadeIn.setOnFinished(r -> {
+                lose.toBack();
+                lose.setVisible(false);
+            });
+        });
+
     }
 
-    private void drawAnimation(Stage primaryStage) throws FileNotFoundException
-    {
-        Label draw = new Label("Looks like a draw folks!!");
+    private void drawAnimation(Stage primaryStage) throws FileNotFoundException {
+
+        Label draw = forGameResults;
+
+        trashTalk.setText("");
+
+        draw.toFront();
+        draw.setVisible(true);
+        draw.setText("Its a draw folks!!");
         draw.setTextFill(Color.WHITE);
         draw.setFont(Font.font("", FontWeight.BOLD, 40));
         draw.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
 
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(1000), draw);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
+        fadeIn.setOnFinished(e -> {
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(4000), draw);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.play();
+            fadeIn.setOnFinished(r -> {
+                draw.toBack();
+                draw.setVisible(false);
+            });
+        });
     }
     }
