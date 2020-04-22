@@ -470,8 +470,8 @@ public class Tic_Game extends Application
         } else {
             one = new ImageView(new Image(new FileInputStream(charAvatars[humanAvatar1]))); // Creates the image for the avatar
             two = new ImageView(new Image(new FileInputStream(charAvatars[humanAvatar2]))); // Creates the image for the avatar
-            dog = new Label("Human 1: Dog"); // Creates the label indicating the player
-            cat = new Label("Human 2: Cat"); // Creates the label indicating the player
+            dog = new Label("Human 1: Cat"); // Creates the label indicating the player
+            cat = new Label("Human 2: Dog"); // Creates the label indicating the player
         }
         one.setFitHeight(100);
         one.setFitWidth(100);
