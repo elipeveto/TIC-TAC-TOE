@@ -458,8 +458,8 @@ public class Tic_Game extends Application
 
         // Based on the game mode, set the labels and avatars
         if (gameMode == 0) {
-            one = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar1]))); // Creates the image for the avatar
-            two = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar2]))); // Creates the image for the avatar
+            one = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar2]))); // Creates the image for the avatar
+            two = new ImageView(new Image(new FileInputStream(automatedAvatars[autoAvatar1]))); // Creates the image for the avatar
             dog = new Label("AI 1: Dog"); // Creates the label indicating the AI
             cat = new Label("AI 2: Cat"); // Creates the label indicating the AI
         } else if (gameMode == 1) {
