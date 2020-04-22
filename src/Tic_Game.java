@@ -563,7 +563,6 @@ public class Tic_Game extends Application
             }
         });
 
-
         if(gameMode == 0)//If game mode is 0 players then this has the AI play each other.
         {
             Cell start = new Cell(primaryStage);
@@ -739,7 +738,7 @@ public class Tic_Game extends Application
                 }
                 else if (dif1 == 2) //Impossible difficulty
                 {
-                    System.out.println("XXXX");
+                    System.out.println("XXXX"+ "   " + whoseTurn);
                     stop = false;//This resets stop to false each move.
                     won = false;//This resets won to false each move.
                     if (whoseTurn != ' ')//as long as the game is not over yet continue.
@@ -770,7 +769,7 @@ public class Tic_Game extends Application
                 }
                 else if (dif2 == 2) //Impossible difficulty
                 {
-                    System.out.println("OOO");
+                    System.out.println("OOO" + "   " + whoseTurn);
                     stop = false;//This resets stop to false each move.
                     won = false;//This resets won to false each move.
                     if (whoseTurn != ' ')//as long as the game is not over yet continue.
@@ -903,7 +902,13 @@ public class Tic_Game extends Application
             else if(cell[1][1].getToken() == token && false == (token != topCenter && token != leftCenter && token != rightCenter && token != bottomCenter))
             {
                 //stops a way it can lose I found.
-                if(topLeft != ' ' && topLeft != token && bottomCenter != ' ' && bottomCenter != token && rightCenter != ' ' && rightCenter != token)
+                if(rightCenter != ' ' && rightCenter != token && topCenter != ' ' && topCenter != token && bottomLeft != ' ' && bottomLeft != token)
+                {
+                    cell[2][2].setToken(token, primaryStage);
+                    whoseTurn(primaryStage);
+                }
+                //stops a way it can lose I found.
+                else if(topLeft != ' ' && topLeft != token && bottomCenter != ' ' && bottomCenter != token && rightCenter != ' ' && rightCenter != token)
                 {
                     cell[2][0].setToken(token, primaryStage);
                     whoseTurn(primaryStage);
