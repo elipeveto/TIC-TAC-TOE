@@ -25,7 +25,12 @@ import java.io.FileNotFoundException;
 
 public class Tic_Game extends Application
 {
-        // Indicate which player has a turn, initially it is the X player
+    public static void main(String[] args)//launches the program.
+    {
+        Application.launch(args);
+    }
+
+    // Indicate which player has a turn, initially it is the X player
         private char whoseTurn = 'X';
 
         // Create and initialize cell
@@ -511,7 +516,6 @@ public class Tic_Game extends Application
                         new BackgroundSize(1200,900, false, false, false, false));
                 borderPane.setBackground(new Background(myBI));
             } catch (FileNotFoundException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
 
@@ -572,7 +576,8 @@ public class Tic_Game extends Application
         {
             Cell start = new Cell(primaryStage);
             start.AI(primaryStage, 'X');
-            while (whoseTurn != ' ') {
+            while (whoseTurn != ' ')
+            {
                 start.AI(primaryStage, 'O');
                 start.AI(primaryStage, 'X');
             }
@@ -725,18 +730,64 @@ public class Tic_Game extends Application
 
             private void AI(Stage primaryStage, char token) throws FileNotFoundException//Does the AI's turn.
             {
-                if(currentDifficulty == 0)//beginner difficulty.
+                if(gameMode == 0)
+                {
+                    if(whoseTurn == 'X')
+                    {
+                        if (dif1 == 0)//beginner difficulty.
+                        {
+                            randomMove(primaryStage, token);//picks a random free spot.
+                        }
+                        else if (dif1 == 1)//intermediate difficulty. Picks a random free spot, unless the opponent has 2 in a line.
+                        {
+                            stop = false;//resets stop incase AIStopCheck stopped a move last move.
+                            AIStopCheck(primaryStage, token);
+                            if (stop == false) //does not move again if it already stopped a move.
+                                randomMove(primaryStage, token);//does a random move.
+                        }
+                        else if (dif1 == 2) //Impossible difficulty
+                        {
+                            stop = false;//This resets stop to false each move.
+                            won = false;//This resets won to false each move.
+                            if (whoseTurn != ' ')//as long as the game is not over yet continue.
+                                AIWinCheck(primaryStage, token);
+                        }
+                    }
+                    else if (whoseTurn == 'O')
+                    {
+                        if (dif2 == 0)//beginner difficulty.
+                        {
+                            randomMove(primaryStage, token);//picks a random free spot.
+                        }
+                        else if (dif2 == 1)//intermediate difficulty. Picks a random free spot, unless the opponent has 2 in a line.
+                        {
+                            stop = false;//resets stop incase AIStopCheck stopped a move last move.
+                            AIStopCheck(primaryStage, token);
+                            if (stop == false) //does not move again if it already stopped a move.
+                                randomMove(primaryStage, token);//does a random move.
+                        }
+                        else if (dif2 == 2) //Impossible difficulty
+                        {
+                            stop = false;//This resets stop to false each move.
+                            won = false;//This resets won to false each move.
+                            if (whoseTurn != ' ')//as long as the game is not over yet continue.
+                                AIWinCheck(primaryStage, token);
+                        }
+                    }
+
+                }
+                else if(currentDifficulty == 0)//beginner difficulty.
                 {
                     randomMove(primaryStage, token);//picks a random free spot.
                 }
-                if(currentDifficulty == 1)//intermediate difficulty. Picks a random free spot, unless the opponent has 2 in a line.
+                else if(currentDifficulty == 1)//intermediate difficulty. Picks a random free spot, unless the opponent has 2 in a line.
                 {
                     stop = false;//resets stop incase AIStopCheck stopped a move last move.
                     AIStopCheck(primaryStage, token);
                     if(stop == false) //does not move again if it already stopped a move.
                         randomMove(primaryStage, token);//does a random move.
                 }
-                if(currentDifficulty == 2) //Impossible difficulty
+                else if(currentDifficulty == 2) //Impossible difficulty
                 {
                     stop = false;//This resets stop to false each move.
                     won = false;//This resets won to false each move.
